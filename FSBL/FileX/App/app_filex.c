@@ -69,6 +69,17 @@ static UINT media_status;
 FX_FILE         fx_file;
 /* Define ThreadX global data structures.  */
 TX_QUEUE        tx_msg_queue;
+
+
+
+/** write this header to disk, this would be the mp4 intro header: */
+__attribute__ ((aligned (8)))
+char dummy_file_header[45] = "HDR_DATA_KILLING_PERFORMANCE";
+
+__attribute__ ((aligned (8)))
+char dummy_file_data[128*1024];
+
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -277,7 +288,10 @@ void fx_app_thread_entry(ULONG thread_input)
     }
 
     /* Write a string to the test file.  */
-    sd_status =  fx_file_write(&fx_file, data, sizeof(data));
+    sd_status =  fx_file_write(&fx_file, dummy_file_header, sizeof(dummy_file_header));
+
+    /* Write more to the test file.  */
+    sd_status =  fx_file_write(&fx_file, dummy_file_data, sizeof(dummy_file_data));
 
     /* Check the file write status.  */
     if (sd_status != FX_SUCCESS)
